@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title></title>
+<title>Bulletproof Code: Abstract Data Types</title>
 <meta name="author" content="(Tim McIver)"/>
 <style type="text/css">
 .underline { text-decoration: underline; }
@@ -26,16 +26,16 @@
 <body>
 <div class="reveal">
 <div class="slides">
-<section id="sec-title-slide"><h2 class="author">Tim McIver</h2><p class="date">Created: 2017-05-18 Thu 23:01</p>
+<section id="sec-title-slide"><h2 class="title">Bulletproof Code: Abstract Data Types</h2>
 </section>
 
 <section>
-<section id="slide-org210c365">
-<h2 id="org210c365">Flax's Domain Model</h2>
-<div class="outline-text-2" id="text-org210c365">
+<section id="slide-org61fb63d">
+<h2 id="org61fb63d">Flax's Domain Model</h2>
+<div class="outline-text-2" id="text-org61fb63d">
 </div></section>
-<section id="slide-org0f3e241">
-<h3 id="org0f3e241">Currently it's this (almost):</h3>
+<section id="slide-org6556b3f">
+<h3 id="org6556b3f">Currently it's (almost) this:</h3>
 <div class="org-src-container">
 
 <pre  class="src src-scala"><span style="color: #e090d7;">final</span> <span style="color: #b4fa70;">case</span> <span style="color: #b4fa70;">class</span> <span style="color: #8cc4ff;">OpenEnrollment</span>(
@@ -58,8 +58,8 @@
 </div>
 
 </section>
-<section id="slide-org00df1d9">
-<h3 id="org00df1d9">To Implement This State Machine</h3>
+<section id="slide-org572edf2">
+<h3 id="org572edf2">To Implement This State Machine</h3>
 
 <div class="figure">
 <p><img src="./images/oe-state-transitions.jpg" alt="oe-state-transitions.jpg" />
@@ -69,12 +69,12 @@
 </section>
 </section>
 <section>
-<section id="slide-org745bc92">
-<h2 id="org745bc92">The Problem</h2>
-<div class="outline-text-2" id="text-org745bc92">
+<section id="slide-org1383468">
+<h2 id="org1383468">The Problem</h2>
+<div class="outline-text-2" id="text-org1383468">
 </div></section>
-<section id="slide-org3bb8976">
-<h3 id="org3bb8976">We Can't Actually Prevent Invalid Data</h3>
+<section id="slide-orgd1212a4">
+<h3 id="orgd1212a4">We Can't Actually Prevent Invalid Data</h3>
 <ul>
 <li>Clients can instantiate arbitrary and invalid OEs</li>
 
@@ -83,12 +83,12 @@
 </section>
 </section>
 <section>
-<section id="slide-org4d2132b">
-<h2 id="org4d2132b">The Solution</h2>
-<div class="outline-text-2" id="text-org4d2132b">
+<section id="slide-org020ef11">
+<h2 id="org020ef11">The Solution</h2>
+<div class="outline-text-2" id="text-org020ef11">
 </div></section>
-<section id="slide-org9295b91">
-<h3 id="org9295b91">Yaron Minsky says:</h3>
+<section id="slide-orgbc00e97">
+<h3 id="orgbc00e97">Yaron Minsky says:</h3>
 <p>
 "Make illegal states unrepresentable" <br />
 <img src="./images/yaronminsky.jpg" alt="yaronminsky.jpg" />
@@ -96,15 +96,15 @@
 </p>
 
 </section>
-<section id="slide-orgcfd6c0c">
-<h3 id="orgcfd6c0c">But How Do We Do This In Scala?</h3>
+<section id="slide-org1c626a9">
+<h3 id="org1c626a9">But How Do We Do This In Scala?</h3>
 <p class="fragment roll-in">
 Traits!
 </p>
 
 </section>
-<section id="slide-org0ad07fc">
-<h3 id="org0ad07fc">A New Model</h3>
+<section id="slide-org5de0ff4">
+<h3 id="org5de0ff4">A New Model</h3>
 <div class="org-src-container">
 
 <pre  class="src src-scala"><span style="color: #b4fa70;">trait</span> <span style="color: #8cc4ff;">OpenEnrollment</span> {
@@ -136,18 +136,41 @@ Traits!
 </section>
 </section>
 <section>
-<section id="slide-orgd03ea5e">
-<h2 id="orgd03ea5e">Demo</h2>
+<section id="slide-orgd9e2e0a">
+<h2 id="orgd9e2e0a">Demo</h2>
+<div class="org-src-container">
+
+<pre  class="src src-scala"><span style="color: #b4fa70;">trait</span> <span style="color: #8cc4ff;">X</span> {
+  <span style="color: #b4fa70;">val</span> <span style="color: #fcaf3e;">a</span><span style="color: #b4fa70;">:</span> <span style="color: #8cc4ff;">Int</span>
+  <span style="color: #b4fa70;">val</span> <span style="color: #fcaf3e;">b</span><span style="color: #b4fa70;">:</span> <span style="color: #8cc4ff;">String</span>
+}
+
+<span style="color: #b4fa70;">object</span> <span style="color: #e9b2e3;">X</span> {
+  <span style="color: #e090d7;">private</span> <span style="color: #b4fa70;">case</span> <span style="color: #b4fa70;">class</span> <span style="color: #8cc4ff;">XImpl</span>(a<span style="color: #b4fa70;">:</span> <span style="color: #8cc4ff;">Int</span>, b<span style="color: #b4fa70;">:</span> <span style="color: #8cc4ff;">String</span>) <span style="color: #b4fa70;">extends</span> <span style="color: #8cc4ff;">X</span> {}
+
+  <span style="color: #b4fa70;">def</span> <span style="color: #fce94f;">mkX</span>(a<span style="color: #b4fa70;">:</span> <span style="color: #8cc4ff;">Int</span>, b<span style="color: #b4fa70;">:</span> <span style="color: #8cc4ff;">String</span>)<span style="color: #b4fa70;">:</span> <span style="color: #8cc4ff;">X</span> <span style="color: #b4fa70;">=</span> <span style="color: #e9b2e3;">XImpl</span>(a, b)
+  <span style="color: #b4fa70;">def</span> <span style="color: #fce94f;">editA</span>(x<span style="color: #b4fa70;">:</span> <span style="color: #8cc4ff;">X</span>, newA<span style="color: #b4fa70;">:</span> <span style="color: #8cc4ff;">Int</span>)<span style="color: #b4fa70;">:</span> <span style="color: #8cc4ff;">X</span> <span style="color: #b4fa70;">=</span> <span style="color: #e9b2e3;">XImpl</span>(newA, x.b)
+
+  <span style="color: #b4fa70;">def</span> <span style="color: #fce94f;">unapply</span>(x<span style="color: #b4fa70;">:</span> <span style="color: #8cc4ff;">XImpl</span>)<span style="color: #b4fa70;">:</span> <span style="color: #8cc4ff;">Option</span>[(<span style="color: #e9b2e3;">Int</span>, <span style="color: #e9b2e3;">String</span>)] <span style="color: #b4fa70;">=</span> <span style="color: #e9b2e3;">Some</span>((x.a, x.b))
+}
+</pre>
+</div>
 
 </section>
 </section>
 <section>
-<section id="slide-org8ddd1ba">
-<h2 id="org8ddd1ba">Disadvantages</h2>
+<section id="slide-org7f7e1fc">
+<h2 id="org7f7e1fc">Disadvantages</h2>
 <ul>
-<li>Vincent said that you lose `equals` and `hashCode` but this doesn't seem to be the case . . .</li>
+<li>Lose the ability to pattern match unless you define your own <code>unapply</code> method.</li>
 
 </ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org195f59d">
+<h2 id="org195f59d">Questions?</h2>
 </section>
 </section>
 </div>

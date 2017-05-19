@@ -4,7 +4,7 @@
 
 * Flax's Domain Model
 
-** Currently it's this (almost):
+** Currently it's (almost) this:
 #+BEGIN_SRC scala
 final case class OpenEnrollment(
   id: UUID,
@@ -71,6 +71,23 @@ object OpenEnrollment {
 #+END_SRC
 
 * Demo
+#+BEGIN_SRC scala
+trait X {
+  val a: Int
+  val b: String
+}
+
+object X {
+  private case class XImpl(a: Int, b: String) extends X {}
+
+  def mkX(a: Int, b: String): X = XImpl(a, b)
+  def editA(x: X, newA: Int): X = XImpl(newA, x.b)
+
+  def unapply(x: XImpl): Option[(Int, String)] = Some((x.a, x.b))
+}
+#+END_SRC
 
 * Disadvantages
-- Vincent said that you lose `equals` and `hashCode` but this doesn't seem to be the case . . .
+- Lose the ability to pattern match unless you define your own ~unapply~ method.
+
+* Questions?
