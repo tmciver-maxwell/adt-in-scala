@@ -1,0 +1,76 @@
+#+REVEAL_THEME: night
+#+OPTIONS: toc:0, num:nil, f:t
+#+REVEAL_ROOT: file:///Users/timmciver/Workspace/reveal.js
+
+* Flax's Domain Model
+
+** Currently it's this (almost):
+#+BEGIN_SRC scala
+final case class OpenEnrollment(
+  id: UUID,
+  startDate: Instant,
+  endDate: Instant,
+  status: OpenEnrollmentState,
+  productMappings: NonEmptyList[ProductMapping],
+  eligibilityGroups: NonEmptyList[EligibilityGroup],
+  employerId: String,
+  createdByTitanUser: String)
+
+def createOpenEnrollment(...): ValidatedNel[OpenEnrollmentError, OpenEnrollment]
+def editOpenEnrollment(...): ValidatedNel[OpenEnrollmentError, OpenEnrollment]
+def deleteOpenEnrollment(...): ValidatedNel[OpenEnrollmentError, OpenEnrollment]
+def runOpenEnrollment(...): ValidatedNel[OpenEnrollmentError, OpenEnrollment]
+def finishRunningOpenEnrollment(...): ValidatedNel[OpenEnrollmentError, OpenEnrollment]
+def errorRunningOpenEnrollment(...): ValidatedNel[OpenEnrollmentError, OpenEnrollment]
+#+END_SRC
+
+** To Implement This State Machine
+[[./images/oe-state-transitions.jpg]]
+
+* The Problem
+
+** We Can't Actually Prevent Invalid Data
+- Clients can instantiate arbitrary and invalid OEs
+
+* The Solution
+
+** Yaron Minsky says:
+"Make illegal states unrepresentable" \\
+[[./images/yaronminsky.jpg]]
+https://blogs.janestreet.com/effective-ml-revisited/
+
+** But How Do We Do This In Scala?
+#+ATTR_REVEAL: :frag roll-in
+Traits!
+
+** A New Model
+#+BEGIN_SRC scala
+trait OpenEnrollment {
+  val id: UUID
+  val startDate: Instant
+  val endDate: Instant
+  val status: OpenEnrollmentState
+  val productMappings: NonEmptyList[ProductMapping]
+  val eligibilityGroups: NonEmptyList[EligibilityGroup]
+  val employerId: String
+  val createdByTitanUser: String
+}
+
+object OpenEnrollment {
+  private case class OpenEnrollmentImpl(
+    id: UUID,
+    startDate: Instant,
+    endDate: Instant,
+    status: OpenEnrollmentState,
+    productMappings: NonEmptyList[ProductMapping],
+    eligibilityGroups: NonEmptyList[EligibilityGroup],
+    employerId: String,
+    createdByTitanUser: String
+  ) extends OpenEnrollment {}
+}
+#+END_SRC
+
+* Demo
+
+* Disadvantages
+- Vincent said that you lose `equals` and `hashCode` but this doesn't seem to be the case . . .
